@@ -1,4 +1,5 @@
-/* Shardy discord bot by Plasmoxy, kys */
+/* Shardy discord bot by Plasmoxy */
+/* he lives on the legendary Christian Minecraft Server */ 
 
 // import
 const Discord = require('discord.js');
