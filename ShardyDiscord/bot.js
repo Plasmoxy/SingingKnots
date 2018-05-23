@@ -1,5 +1,5 @@
 /* Shardy discord bot by Plasmoxy */
-/* he lives on the legendary Christian Minecraft Server */ 
+/* he lives on the legendary Christian Minecraft Server */
 
 // import
 const Discord = require('discord.js');
@@ -9,6 +9,34 @@ const {VM} = require('vm2');
 const express = require('express');
 
 let GLOBAL_LOG = "";
+
+let commands = {
+
+  "ping": (msg) => {
+    msg.channel.send("pong nigger!");
+  },
+
+  // JAVASCRIPPPPTT
+  "js": (msg) => {
+
+    let jscmd = msg.content.substring(2);
+    clog('<Executing js command> : ' + jscmd);
+    try {
+      let output = vm.run(jscmd);
+      if (output) msg.channel.send(String(output));
+    } catch(error) {
+      msg.channel.send("\n==== JS EXCEPTION ====\n" + error);
+    }
+
+  }
+
+};
+
+let admincommands = {
+  "?checkadmin": (msg) => {
+    msg.reply('yo are the admin my nibba');
+  }
+};
 
 function clog(what) {
   console.log(what);
@@ -42,18 +70,14 @@ client.on("message", (msg) => {
 
   if (msg.author.id == client.user.id) return; // dont talk with yourself
 
-  const c = msg.content;
-
   // print to console
-  clog(`${msg.channel.name} : [ ${msg.author.username} ] ${c}`);
+  clog(`${msg.channel.name} : [ ${msg.author.username} ] ${msg.content}`);
 
-  // --- GLOBAL ADMIN COMMANDS ---
+  // ----- COMMAND ROUTING -----
+
+  // --- ADMIN ---
   if (msg.author.id == parseInt(process.env.ADMIN_ID)) {
-    switch (c) {
-      case '?checkadmin':
-        msg.reply('yo are the admin my nibba')
-        break;
-    }
+
   }
 
   // --- CONSOLE COMMANDS ---
@@ -62,33 +86,8 @@ client.on("message", (msg) => {
   }
 
   // --- GLOBAL COMMANDS ---
-
-  if (c === '?whatsmyid') {
-    msg.reply(msg.author.id);
-  }
-
-  // JAVASCRIPPPPTT
-  if (c.startsWith('js')) {
-
-    let jscmd = c.substring(2);
-    clog('<Executing js command> : ' + jscmd);
-    try {
-      let output = vm.run(jscmd);
-      if (output) msg.channel.send(String(output));
-    } catch(error) {
-      msg.channel.send("\n==== JS EXCEPTION ====\n" + error);
-    }
-
-  }
-
-  // --- GLOBAL INSPECTIONS ----
-
-  if (c.startsWith("ping")) {
-    msg.channel.send("pong nigger!");
-  }
-
-  if ( c.includes('cunt') || c.includes('nigger') || c.includes('fuck') || c.includes('bitch') ) {
-    msg.reply('No swearing on our christian server,\nyou fucking nigger cunt faggot bitch just kill yourself.');
+  for (const [key, fun] of Object.entries(commands)) {
+    fun(msg);
   }
 
 });
