@@ -1,5 +1,5 @@
 /* Shardy discord bot by Plasmoxy */
-/* he lives on the legendary Christian Minecraft Server */
+/* he lives on my legendary Christian Minecraft Server */
 
 // import
 const Discord = require('discord.js');
@@ -12,17 +12,16 @@ let GLOBAL_LOG = "";
 
 let commands = {
 
-  "ping": (msg) => {
+  "ping": (msg, query) => {
     msg.channel.send("pong nigger!");
   },
 
   // JAVASCRIPPPPTT
-  "js": (msg) => {
+  "js": (msg, query) => {
 
-    let jscmd = msg.content.substring(2);
-    clog('<Executing js command> : ' + jscmd);
+    clog('<Executing js command> : ' + query);
     try {
-      let output = vm.run(jscmd);
+      let output = vm.run(query);
       if (output) msg.channel.send(String(output));
     } catch(error) {
       msg.channel.send("\n==== JS EXCEPTION ====\n" + error);
@@ -32,11 +31,18 @@ let commands = {
 
 };
 
-let admincommands = {
-  "?checkadmin": (msg) => {
+let adminCommands = {
+  "?checkadmin": (msg, query) => {
     msg.reply('yo are the admin my nibba');
   }
 };
+
+function processCmd(msg, key, fun) {
+  if (msg.content.startsWith(key)) {
+    let query = msg.content.substring(key.length + 1); // + 1 space
+    fun(msg, query);
+  }
+}
 
 function clog(what) {
   console.log(what);
@@ -77,17 +83,14 @@ client.on("message", (msg) => {
 
   // --- ADMIN ---
   if (msg.author.id == parseInt(process.env.ADMIN_ID)) {
-
-  }
-
-  // --- CONSOLE COMMANDS ---
-  if (msg.channel.name === '_shardyconsole') {
-
+    for (const [key, fun] of Object.entries(adminCommands)) {
+      processCmd(msg, key, fun);
+    }
   }
 
   // --- GLOBAL COMMANDS ---
   for (const [key, fun] of Object.entries(commands)) {
-    fun(msg);
+    processCmd(msg, key, fun);
   }
 
 });
