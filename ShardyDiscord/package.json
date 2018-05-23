@@ -14,7 +14,7 @@
     "express": "^4.15.2"
   },
   "scripts": {
-    "start": "pm2 start bot.js"
+    "start": "pm2 start bot.js",
   },
   "author": "Plasmoxy",
   "license": "ISC"
